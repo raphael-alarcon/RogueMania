@@ -3,56 +3,62 @@ import { Characters } from "./characters/Characters";
 
 export const Game = () => {
 
-  const FRAME_RATE = 13;
+  // #region Constants
+	const FRAME_RATE = 5;
+  // #endregion
 
-  const canvasRef = useRef<HTMLCanvasElement>(null);
-  const [context, setContext] = useState<CanvasRenderingContext2D | null>(null);
-  const [charactersController, setCharactersController] = useState(<Characters context={context} characters={[]} frameCount={0} />);
+	// #region States and refs
+	const canvasRef = useRef<HTMLCanvasElement>(null);
+	const [context, setContext] = useState<CanvasRenderingContext2D | null>(
+		null
+	);
+	const [charactersController, setCharactersController] = useState(
+		<Characters context={context} characters={[]} frameCount={0} />
+	);
+  const childFunc = useRef<any>(null);
+	// #endregion
 
+	useEffect(() => {
+		if (!canvasRef.current) return;
+		const renderContext = canvasRef.current.getContext(
+			"2d"
+		) as CanvasRenderingContext2D;
+		setContext(renderContext);
+		renderContext.clearRect(0, 0, window.innerWidth, window.innerHeight);
 
-  const allCharacters = [{
-    type: "knightSoldier",
-    id: 1,
-    x: 0,
-    y: 0,
-  }];
-  
-  useEffect(() => { 
-    console.log("canvasRef.current", canvasRef.current)
-    if (!canvasRef.current)return;
-    const renderContext = canvasRef.current.getContext("2d") as CanvasRenderingContext2D;
-    setContext(renderContext);
-    renderContext.clearRect(0, 0, window.innerWidth, window.innerHeight);
+		renderContext.imageSmoothingQuality = "high";
 
-    renderContext.imageSmoothingQuality = "high";
+		let frameCount = 0;
+		let animationFrameId = 0;
 
-    let frameCount = 0;
-    let animationFrameId = 0;
-  
-    const render = () => {
-      animationFrameId = requestAnimationFrame(render);
-      if (animationFrameId % FRAME_RATE === 0)frameCount++;
-      setCharactersController(<Characters context={renderContext} characters={allCharacters} frameCount={frameCount} />);
-    };
+		const render = () => {
+			animationFrameId = requestAnimationFrame(render);
+			if (animationFrameId % FRAME_RATE === 0) frameCount++;
+			setCharactersController(
+				<Characters
+					context={renderContext}
+					frameCount={frameCount}
+          childFunc={childFunc}
+				/>
+			);
+		};
 
-    render();
+		render();
 
-    return () => {
-      cancelAnimationFrame(animationFrameId);
-      setContext(null);
-    }
+		return () => {
+			cancelAnimationFrame(animationFrameId);
+			setContext(null);
+		};
+	}, [canvasRef]);
 
-  }, [canvasRef]);
-
-  return (
-    <canvas
-      width={window.innerWidth}
-      height={window.innerHeight}
-      ref={canvasRef}
-    >
-      {charactersController}
-    </canvas>
-  );
+	return (
+		<canvas
+			width={window.innerWidth}
+			height={window.innerHeight - 10}
+			ref={canvasRef}
+			onKeyDown={(event) => childFunc.current(event)}
+			tabIndex={0}>
+			{charactersController}
+		</canvas>
+	);
 };
-
-

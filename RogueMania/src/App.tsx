@@ -1,8 +1,8 @@
 import { useState } from 'react'
 import { Game } from './game/Game'
+import './App.css'
 
 function App() {
-  const [gameLoop, setGameLoop] = useState(0)
 
   return (
     <div className="App">
