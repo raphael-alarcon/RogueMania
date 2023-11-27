@@ -1,0 +1,15 @@
+* {
+	margin: 0;
+	padding: 0;
+	box-sizing: border-box;
+}
+
+body {
+	display: grid;
+	place-items: center;
+}
+
+#canvas {
+	border: solid 1px black;
+	image-rendering: pixelated;
+}

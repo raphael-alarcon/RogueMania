@@ -1,4 +1,4 @@
-import { Game } from "../gamelogic/Game";
+import { Game } from "@game/Game";
 
 export class Core {
 	private canvas: HTMLCanvasElement;
@@ -7,7 +7,6 @@ export class Core {
 	constructor(canvas: HTMLCanvasElement) {
 		this.canvas = canvas;
 		this.context = canvas.getContext("2d");
-
 		this.setup();
 		if (!this.context) {
 			throw new Error("Could not get context");
@@ -16,9 +15,8 @@ export class Core {
 	}
 
 	private setup(): void {
-		this.canvas.width = 800;
-		this.canvas.height = 600;
-		this.canvas.style.border = "1px solid black";
+		this.canvas.width = window.innerWidth - 3;
+		this.canvas.height = window.innerHeight - 3;
 		console.log("Core setup", this.canvas, this.context);
 	}
 }

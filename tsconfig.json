@@ -19,14 +19,15 @@
     "noUnusedParameters": true,
     "noFallthroughCasesInSwitch": true,
 
-    "baseUrl": "./src",
+    "baseUrl": "./",
     "paths": {
-      "@/*": ["/*"],
-      "@game/*": ["game/*"],
-      "@core/*": ["core/*"],
-      "@entities/*": ["entities/*"],
-      "@gamelogic/*": ["/gamelogic/*"],
-      "@gameobjects/*": ["gameobjects/*"],
+      "@/*": ["src/*"],
+      "@game/*": ["src/game/*"],
+      "@gameobjects/*": ["src/game/gameobjects/*"],
+      "@entities/*": ["src/game/gameobjects/entities/*"],
+      "@gamelogic/*": ["src/game/gamelogic/*"],
+      "@assets/*": ["assets/*"],
+      "@utils/*": ["src/utils/*"],
     }
   },
   "include": ["src"]
