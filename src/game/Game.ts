@@ -13,6 +13,7 @@ export class Game {
 
     constructor(context: CanvasRenderingContext2D) {
         this.context = context;
+        this.context.imageSmoothingEnabled = false;
         this.gameObjects.push(new Player(new Sprite(charbase, 64), new Position(100, 100)));
         this.gameLoop();
     }

@@ -39,6 +39,7 @@ export class Player extends Entity {
     }
 
     handleKeyDown(event: KeyboardEvent) {
+        if (Object.keys(keyboardActionMap).indexOf(event.key) == -1) return;
         this.pressedKeys[event.key] = true;
         this.direction = keyboardActionMap[event.key];
         this.status = EntityStatus.MOVING;   

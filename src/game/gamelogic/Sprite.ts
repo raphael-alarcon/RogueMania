@@ -1,5 +1,5 @@
 export class Sprite {
-    public SPRITE_SIZE: number;
+    public readonly SPRITE_SIZE: number;
 
     public sprite: HTMLImageElement;
 

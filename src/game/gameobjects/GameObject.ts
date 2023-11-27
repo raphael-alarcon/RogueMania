@@ -17,7 +17,7 @@ export abstract class GameObject {
     draw(context: CanvasRenderingContext2D | null) {
         if (!context || !this.sprite.isLoaded) return;
         const [frameX, frameY]: number[] = this.frame;
-        context.drawImage(this.sprite.sprite, frameX, frameY, this.sprite.SPRITE_SIZE, this.sprite.SPRITE_SIZE, this.position.x, this.position.y, this.sprite.SPRITE_SIZE, this.sprite.SPRITE_SIZE);
+        context.drawImage(this.sprite.sprite, frameX, frameY, this.sprite.SPRITE_SIZE, this.sprite.SPRITE_SIZE, this.position.x, this.position.y, this.sprite.SPRITE_SIZE*2, this.sprite.SPRITE_SIZE*2);
         this.sprite.updateAnimationProgress();
     }
 }
