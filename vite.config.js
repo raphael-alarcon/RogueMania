@@ -10,6 +10,7 @@ export default defineConfig({
 			"@gamelogic": path.resolve(__dirname, "./src/game/gamelogic"),
 			"@core": path.resolve(__dirname, "./src/game/core"),
 			"@entities": path.resolve(__dirname, "./src/game/gameobjects/entities"),
+			"@map": path.resolve(__dirname, "./src/game/map"),
 			"@assets": path.resolve(__dirname, "./assets"),
 			"@utils": path.resolve(__dirname, "./src/utils"),
 		},

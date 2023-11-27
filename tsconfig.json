@@ -25,6 +25,7 @@
       "@game/*": ["src/game/*"],
       "@gameobjects/*": ["src/game/gameobjects/*"],
       "@entities/*": ["src/game/gameobjects/entities/*"],
+      "@map/*": ["src/game/map/*"],
       "@gamelogic/*": ["src/game/gamelogic/*"],
       "@assets/*": ["assets/*"],
       "@utils/*": ["src/utils/*"],

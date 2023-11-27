@@ -4,6 +4,8 @@ export class Core {
 	private canvas: HTMLCanvasElement;
 	private context: CanvasRenderingContext2D | null;
 
+	public static readonly SCALE: number = 4;
+
 	constructor(canvas: HTMLCanvasElement) {
 		this.canvas = canvas;
 		this.context = canvas.getContext("2d");
@@ -15,8 +17,8 @@ export class Core {
 	}
 
 	private setup(): void {
-		this.canvas.width = window.innerWidth - 3;
-		this.canvas.height = window.innerHeight - 3;
+		this.canvas.width = window.innerWidth;
+		this.canvas.height = window.innerHeight;
 		console.log("Core setup", this.canvas, this.context);
 	}
 }

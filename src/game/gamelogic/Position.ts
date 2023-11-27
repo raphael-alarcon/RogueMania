@@ -6,4 +6,8 @@ export class Position {
 		this.x = x;
 		this.y = y;
 	}
+
+	static fromArray(position: [number, number]): Position {
+		return new Position(position[0], position[1]);
+	}
 }

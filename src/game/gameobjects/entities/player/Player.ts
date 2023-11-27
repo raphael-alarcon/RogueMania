@@ -2,8 +2,12 @@ import { Position } from "@/game/gamelogic/Position";
 import { Entity } from "@entities/Entity";
 import { Sprite } from "@/game/gamelogic/Sprite";
 import { EntityStatus, keyboardActionMap, directionUpdateMap } from "@/utils/Constants";
+import { Camera } from "@/game/gamelogic/Camera";
+import { getPositionOfCamera } from "@/utils/tools";
 
 export class Player extends Entity {
+
+    public camera: Camera;
 
     get frame(): number[] {
         let frameX: number = this.shouldBeAnimated() ? this.sprite.SPRITE_SIZE * this.sprite.currentAnimationFrame : 0;
@@ -20,9 +24,11 @@ export class Player extends Entity {
         "ArrowLeft": false
     }
 
-    constructor(sprite: Sprite, position: Position) {
+    constructor(sprite: Sprite, position: Position, camera: Camera) {
         super(sprite, position);
         this.sprite.numberOfFrames-=2;
+        this.camera = camera;
+        camera.position = getPositionOfCamera(this);
         window.addEventListener("keydown", this.handleKeyDown.bind(this));
         window.addEventListener("keyup", this.handleKeyUp.bind(this));
     }
@@ -33,6 +39,9 @@ export class Player extends Entity {
                 if (this.pressedKeys[key]) {
                     const [property, posUpdate]: [string, number] = directionUpdateMap[keyboardActionMap[key]];
                     this.position[property as keyof Position] += posUpdate;
+                    let cameraTheoreticalPosition: Position = new Position(this.camera.x, this.camera.y);
+                    cameraTheoreticalPosition[property as keyof Position] += posUpdate;
+                    if (this.camera.isInBoundaries(cameraTheoreticalPosition))this.camera.position[property as keyof Position] += posUpdate;
                 }
             }
         }
