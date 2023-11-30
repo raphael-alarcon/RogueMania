@@ -19,6 +19,5 @@ export class Core {
 	private setup(): void {
 		this.canvas.width = window.innerWidth;
 		this.canvas.height = window.innerHeight;
-		console.log("Core setup", this.canvas, this.context);
 	}
 }

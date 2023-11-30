@@ -1,69 +1,117 @@
 import { Position } from "@/game/gamelogic/Position";
 import { Entity } from "@entities/Entity";
 import { Sprite } from "@/game/gamelogic/Sprite";
-import { EntityStatus, keyboardActionMap, directionUpdateMap } from "@/utils/Constants";
+import { Status, directionUpdateMap, keyboardActionMap } from "@/utils/Constants";
 import { Camera } from "@/game/gamelogic/Camera";
-import { getPositionOfCamera } from "@/utils/tools";
+import { getStartPositionOfCamera } from "@/utils/tools";
+import { Map } from "@/game/map/Map";
+import { ControllableObject } from "@gameobjects/ControllableObject";
+import { Core } from "@/game/core/Core";
 
-export class Player extends Entity {
+export class Player extends Entity implements ControllableObject {
+	public camera: Camera;
 
-    public camera: Camera;
+	get frame(): number[] {
+		let frameX: number = this.shouldBeAnimated() ? this.sprite.SPRITE_SIZE * this.sprite.currentAnimationFrame : 0;
+		let frameY: number = this.status * this.sprite.SPRITE_SIZE + this.sprite.SPRITE_SIZE * this.direction;
+		return [frameX, frameY];
+	}
 
-    get frame(): number[] {
-        let frameX: number = this.shouldBeAnimated() ? this.sprite.SPRITE_SIZE * this.sprite.currentAnimationFrame : 0;
-        let frameY: number = (this.status*this.sprite.SPRITE_SIZE) + (this.sprite.SPRITE_SIZE * this.direction);
-        return [frameX, frameY];
-    }
+	public pressedKeys: {
+		[key: string]: boolean;
+	} = {
+		ArrowUp: false,
+		ArrowDown: false,
+		ArrowRight: false,
+		ArrowLeft: false,
+	};
 
-    public pressedKeys: {
-        [key: string]: boolean;
-    } = {
-        "ArrowUp": false,
-        "ArrowDown": false,
-        "ArrowRight": false,
-        "ArrowLeft": false
-    }
+	constructor(sprite: Sprite, position: Position, map: Map, camera: Camera) {
+		super(sprite, position, map);
+		this.sprite.numberOfFrames -= 2;
+		this.camera = camera;
+		camera.position = getStartPositionOfCamera(this);
+		window.addEventListener("keydown", this.handleKeyDown.bind(this));
+		window.addEventListener("keyup", this.handleKeyUp.bind(this));
+	}
 
-    constructor(sprite: Sprite, position: Position, camera: Camera) {
-        super(sprite, position);
-        this.sprite.numberOfFrames-=2;
-        this.camera = camera;
-        camera.position = getPositionOfCamera(this);
-        window.addEventListener("keydown", this.handleKeyDown.bind(this));
-        window.addEventListener("keyup", this.handleKeyUp.bind(this));
-    }
+	override update() {
+		if (this.status == Status.MOVING) {
+			for (let key in this.pressedKeys) {
+				if (this.pressedKeys[key]) {
+					this.handleMovement(key);
+				}
+			}
+		}
+	}
 
-    override update() {
-        if (this.status == EntityStatus.MOVING) {
-            for(let key in this.pressedKeys) {
-                if (this.pressedKeys[key]) {
-                    const [property, posUpdate]: [string, number] = directionUpdateMap[keyboardActionMap[key]];
-                    this.position[property as keyof Position] += posUpdate;
-                    let cameraTheoreticalPosition: Position = new Position(this.camera.x, this.camera.y);
-                    cameraTheoreticalPosition[property as keyof Position] += posUpdate;
-                    if (this.camera.isInBoundaries(cameraTheoreticalPosition))this.camera.position[property as keyof Position] += posUpdate;
-                }
-            }
-        }
-    }
+	handleKeyDown(event: KeyboardEvent) {
+		if (Object.keys(keyboardActionMap).indexOf(event.key) == -1) return;
+		this.pressedKeys[event.key] = true;
+		this.direction = keyboardActionMap[event.key];
+		this.status = Status.MOVING;
+	}
 
-    handleKeyDown(event: KeyboardEvent) {
-        if (Object.keys(keyboardActionMap).indexOf(event.key) == -1) return;
-        this.pressedKeys[event.key] = true;
-        this.direction = keyboardActionMap[event.key];
-        this.status = EntityStatus.MOVING;   
-    }
+	handleKeyUp(event: KeyboardEvent) {
+		this.pressedKeys[event.key] = false;
+		if (Object.values(this.pressedKeys).every((value) => !value)) {
+			this.status = Status.IDLE;
+			return;
+		}
+		this.direction = keyboardActionMap[Object.keys(this.pressedKeys).find((key) => this.pressedKeys[key])!];
+	}
 
-    handleKeyUp(event: KeyboardEvent) {
-        this.pressedKeys[event.key] = false;
-        if (Object.values(this.pressedKeys).every((value) => !value)) {
-            this.status = EntityStatus.IDLE;
-            return;
-        }
-        this.direction = keyboardActionMap[Object.keys(this.pressedKeys).find((key) => this.pressedKeys[key])!];
-    }
+	shouldBeAnimated(): boolean {
+		return this.status != Status.IDLE;
+	}
 
-    shouldBeAnimated(): boolean {
-        return this.status != EntityStatus.IDLE;
-    }
+	canMove(property: keyof Position, posUpdate: number): boolean {
+		const minCoordinates: Position = new Position(0, 0);
+		const maxCoordinates: Position = new Position(this.map.TOTAL_SIZE, this.map.TOTAL_SIZE);
+
+		return this.isInBoundaries(this.theoricalPosition(property, posUpdate), minCoordinates, maxCoordinates);
+	}
+
+	handleMovement(key: string) {
+		const [property, posUpdate] = directionUpdateMap[keyboardActionMap[key]];
+		if (this.canMove(property, posUpdate)) {
+			this.move(keyboardActionMap[key]);
+		}
+		if (this.camera.canMove(property, posUpdate)) {
+			this.camera.move(keyboardActionMap[key]);
+		}
+	}
+
+	//TODO: Refactor this function
+	get positionOnScreen(): Position {
+		const baseSpriteCoordinates: Position = new Position(this.camera.width / 2 - this.sprite.sizeOnScreen / 2, this.camera.height / 2 - this.sprite.sizeOnScreen / 2);
+
+		let minusValues: Position = new Position(baseSpriteCoordinates.x - this.position.x, baseSpriteCoordinates.y - this.position.y);
+
+		// camera at max coordinates
+		let coordinatesOnScreen = new Position(baseSpriteCoordinates.x - minusValues.x, baseSpriteCoordinates.y - minusValues.y);
+		console.log(minusValues.x, minusValues.y);
+
+		return coordinatesOnScreen;
+	}
+
+	override draw(context: CanvasRenderingContext2D): void {
+		if (!context || !this.sprite.isLoaded) return;
+		const [frameX, frameY]: number[] = this.frame;
+		context.drawImage(
+			this.sprite.sprite,
+			frameX,
+			frameY,
+			this.sprite.SPRITE_SIZE,
+			this.sprite.SPRITE_SIZE,
+			this.positionOnScreen.x,
+			this.positionOnScreen.y,
+			this.sprite.SPRITE_SIZE * Core.SCALE,
+			this.sprite.SPRITE_SIZE * Core.SCALE
+		);
+		context.strokeStyle = "red";
+		context.lineWidth = 2;
+		context.strokeRect(this.positionOnScreen.x, this.positionOnScreen.y, this.sprite.SPRITE_SIZE * Core.SCALE, this.sprite.SPRITE_SIZE * Core.SCALE);
+		this.sprite.updateAnimationProgress();
+	}
 }

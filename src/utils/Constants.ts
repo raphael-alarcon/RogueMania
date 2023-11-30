@@ -1,3 +1,5 @@
+import { Position } from "@/game/gamelogic/Position";
+
 //#region Direction
 export enum Direction {
 	DOWN = 0,
@@ -7,10 +9,10 @@ export enum Direction {
 }
 
 type DirectionMap = {
-	[key in Direction]: [string, number];
+	[key in Direction]: [keyof Position, number];
 };
 
-const MOVEMENT_SPEED: number = 1;
+export const MOVEMENT_SPEED: number = 10;
 
 export const directionUpdateMap: DirectionMap = {
 	[Direction.DOWN]: ["y", MOVEMENT_SPEED],
@@ -22,7 +24,7 @@ export const directionUpdateMap: DirectionMap = {
 
 //#region Keyboard
 type KeyboardDirection = {
-	[key in string]: Direction;
+	[key: string]: Direction;
 };
 
 export const keyboardActionMap: KeyboardDirection = {
@@ -34,7 +36,7 @@ export const keyboardActionMap: KeyboardDirection = {
 //#endregion
 
 //#region Entity
-export enum EntityStatus {
+export enum Status {
 	IDLE = 0,
 	ATTACKING = 2,
 	DEAD = 3,
