@@ -12,7 +12,7 @@ type DirectionMap = {
 	[key in Direction]: [keyof Position, number];
 };
 
-export const MOVEMENT_SPEED: number = 10;
+export const MOVEMENT_SPEED: number = 1;
 
 export const directionUpdateMap: DirectionMap = {
 	[Direction.DOWN]: ["y", MOVEMENT_SPEED],

@@ -27,7 +27,7 @@ export class Game {
 	initPlayer() {
 		const playerSprite: Sprite = new Sprite(charbase, 64);
 		const canvas: HTMLCanvasElement = this.context.canvas;
-		const playerStartPosition: Position = getStartPositionOfPlayer(playerSprite.SPRITE_SIZE, this.map);
+		const playerStartPosition: Position = getStartPositionOfPlayer(playerSprite.sizeOnScreen, this.map);
 		const camera = new Camera(new Position(0, 0), canvas.width, canvas.height, this.map);
 		this.gameObjects.push(new Player(playerSprite, playerStartPosition, this.map, camera));
 		this.camera = camera;
@@ -56,6 +56,8 @@ export class Game {
 		const debugMargin: number = 10;
 		const fontsize: number = 20;
 		this.context.font = fontsize + "px Arial";
+		this.context.fillStyle = "black";
+		this.context.fillRect(debugMargin, debugMargin, 400, 90);
 		this.context.fillStyle = "white";
 		this.context.fillText(`Player: x: ${this.gameObjects[0].position.x} y: ${this.gameObjects[0].position.y}`, debugMargin, fontsize + debugMargin);
 		this.context.fillText(
@@ -64,5 +66,6 @@ export class Game {
 			fontsize * 2 + debugMargin
 		);
 		this.context.fillText(`Canvas size: w: ${this.context.canvas.width} h: ${this.context.canvas.height}`, debugMargin, fontsize * 3 + debugMargin);
+		this.context.fillText(`Map size: ${this.map.TOTAL_SIZE}`, debugMargin, fontsize * 4 + debugMargin);
 	}
 }

@@ -26,7 +26,7 @@ export function getStartPositionOfCamera(player: Player): Position {
 
 export function getTilesBondaries(camera: any): [Position, Position] {
 	const startTile: Position = new Position(Math.floor(camera.x / Map.TILE_SIZE), Math.floor(camera.y / Map.TILE_SIZE));
-	const endTile: Position = new Position(startTile.x + camera.width / Map.TILE_SIZE, startTile.y + camera.height / Map.TILE_SIZE + 1);
+	const endTile: Position = new Position(startTile.x + camera.width / Map.TILE_SIZE + 1, startTile.y + camera.height / Map.TILE_SIZE + 1);
 	return [startTile, endTile];
 }
 

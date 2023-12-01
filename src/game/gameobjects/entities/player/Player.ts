@@ -86,11 +86,25 @@ export class Player extends Entity implements ControllableObject {
 	get positionOnScreen(): Position {
 		const baseSpriteCoordinates: Position = new Position(this.camera.width / 2 - this.sprite.sizeOnScreen / 2, this.camera.height / 2 - this.sprite.sizeOnScreen / 2);
 
-		let minusValues: Position = new Position(baseSpriteCoordinates.x - this.position.x, baseSpriteCoordinates.y - this.position.y);
+		let centerOfScreen: Position = new Position(this.camera.width / 2, this.camera.height / 2);
 
 		// camera at max coordinates
-		let coordinatesOnScreen = new Position(baseSpriteCoordinates.x - minusValues.x, baseSpriteCoordinates.y - minusValues.y);
-		console.log(minusValues.x, minusValues.y);
+
+		let coordinatesOnScreen: Position = { ...baseSpriteCoordinates };
+
+		if (this.position.x - baseSpriteCoordinates.x < 0) {
+			coordinatesOnScreen.x = this.position.x;
+		}
+		if (this.position.y - baseSpriteCoordinates.y < 0) {
+			coordinatesOnScreen.y = this.position.y;
+		}
+
+		if (this.camera.x + this.camera.width / 2 - this.sprite.sizeOnScreen / 2 > this.camera.maxX) {
+			coordinatesOnScreen.x = this.position.x - (this.map.TOTAL_SIZE - this.camera.width) - this.sprite.sizeOnScreen;
+		}
+		if (this.camera.y + this.camera.height / 2 - this.sprite.sizeOnScreen / 2 > this.camera.maxY) {
+			coordinatesOnScreen.y = this.position.y - (this.map.TOTAL_SIZE - this.camera.height) - this.sprite.sizeOnScreen;
+		}
 
 		return coordinatesOnScreen;
 	}
@@ -111,7 +125,6 @@ export class Player extends Entity implements ControllableObject {
 		);
 		context.strokeStyle = "red";
 		context.lineWidth = 2;
-		context.strokeRect(this.positionOnScreen.x, this.positionOnScreen.y, this.sprite.SPRITE_SIZE * Core.SCALE, this.sprite.SPRITE_SIZE * Core.SCALE);
 		this.sprite.updateAnimationProgress();
 	}
 }
