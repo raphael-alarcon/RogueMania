@@ -1,17 +1,36 @@
 import { GameObject } from "@gameobjects/GameObject";
 import { TilesetRepository } from "@gamelogic/Tileset";
-import { Camera } from "@gamelogic/Camera";
+import { Core } from "@game/core/Core";
+import mapImage from "@assets/map/basemap.png";
+import { Player } from "../gameobjects/entities/player/Player";
+import { Camera, getCamera } from "@/utils/tools";
 import { Position } from "@gamelogic/Position";
-import { Core } from "../core/Core";
-import { getOffset, getTilesBondaries } from "@/utils/tools";
+import mapData from "@assets/map/basemap.json";
+import { Size } from "@gamelogic/Size";
 
 export class Map {
-	public tilesetRepository: TilesetRepository = new TilesetRepository();
-	public _environmentElements: GameObject[] = [];
-	private grassTiles: Position[] = [];
-	public static TILE_SIZE: number = 16;
-	public MAP_TILES: number = 100;
-	public TOTAL_SIZE: number = this.MAP_TILES * Map.TILE_SIZE;
+	tilesetRepository: TilesetRepository = new TilesetRepository();
+	_environmentElements: GameObject[] = [];
+	background: HTMLImageElement = new Image();
+	static TILE_SIZE: number = 16;
+	isLoaded: boolean = false;
+	player: Player | null = null;
+	_data = mapData;
+
+	get width(): number {
+		return this.background.width;
+	}
+	get height(): number {
+		return this.background.height;
+	}
+
+	getTile(position: Position): Position {
+		return new Position(Math.floor(position.x / Map.TILE_SIZE), Math.floor(position.y / Map.TILE_SIZE));
+	}
+
+	getMapTileSize(): Size {
+		return new Size(this.width / Map.TILE_SIZE, this.height / Map.TILE_SIZE);
+	}
 
 	constructor() {
 		Map.TILE_SIZE *= Core.SCALE;
@@ -19,39 +38,16 @@ export class Map {
 	}
 
 	setupMap() {
-		for (let i = 0; i < this.MAP_TILES; i++) {
-			for (let j = 0; j < this.MAP_TILES; j++) {
-				const grassTile = this.tilesetRepository.TILE_FOREST.tiles.grass;
-				this.grassTiles.push(grassTile.tileCoordinates());
-			}
-		}
+		this.background.src = mapImage;
+		this.background.onload = () => {
+			this.isLoaded = true;
+		};
 	}
 
-	drawBackground(context: CanvasRenderingContext2D, camera: Camera) {
-		const backgroundTile = this.tilesetRepository.TILE_FOREST.tiles.grass;
-
-		const [startTile, endTile]: [Position, Position] = getTilesBondaries(camera);
-
-		const offset: Position = getOffset(camera, startTile);
-
-		for (let i = startTile.x; i <= endTile.x; i++) {
-			for (let j = startTile.y; j <= endTile.y; j++) {
-				let tile = this.grassTiles[i * j];
-				const x = (i - startTile.x) * Map.TILE_SIZE + offset.x;
-				const y = (j - startTile.y) * Map.TILE_SIZE + offset.y;
-				context.drawImage(
-					this.tilesetRepository.TILE_FOREST.sprite.sprite,
-					tile.x,
-					tile.y,
-					backgroundTile.TEXTURE_SIZE,
-					backgroundTile.TEXTURE_SIZE,
-					Math.round(x),
-					Math.round(y),
-					Map.TILE_SIZE,
-					Map.TILE_SIZE
-				);
-			}
-		}
+	drawBackground(context: CanvasRenderingContext2D) {
+		if (!this.isLoaded || !this.player) return;
+		const camera: Camera = getCamera(this.player, context.canvas);
+		context.drawImage(this.background, camera.x, camera.y, camera.width, camera.height, 0, 0, context.canvas.width, context.canvas.height);
 	}
 
 	placeEnvironmentElement(gameObject: GameObject) {

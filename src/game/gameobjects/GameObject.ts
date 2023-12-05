@@ -34,8 +34,8 @@ export abstract class GameObject implements AnimatableObject {
 			this.sprite.SPRITE_SIZE,
 			coordinatesOnScreen.x,
 			coordinatesOnScreen.y,
-			this.sprite.SPRITE_SIZE * Core.SCALE,
-			this.sprite.SPRITE_SIZE * Core.SCALE
+			this.sprite.sizeOnScreen,
+			this.sprite.sizeOnScreen
 		);
 		this.sprite.updateAnimationProgress();
 	}

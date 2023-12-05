@@ -6,13 +6,12 @@ import { Position } from "@gamelogic/Position";
 import charbase from "@assets/player/charbase.png";
 import { Map } from "./map/Map";
 import { getStartPositionOfPlayer } from "@/utils/tools";
-import { Camera } from "@gamelogic/Camera";
 
 export class Game {
 	private context: CanvasRenderingContext2D;
 	private gameObjects: GameObject[] = [];
 	private map: Map;
-	private camera: Camera = Object.create(null);
+	private player: Player | null = null;
 
 	private gameFrameNumber: number = 0;
 
@@ -26,11 +25,10 @@ export class Game {
 
 	initPlayer() {
 		const playerSprite: Sprite = new Sprite(charbase, 64);
-		const canvas: HTMLCanvasElement = this.context.canvas;
-		const playerStartPosition: Position = getStartPositionOfPlayer(playerSprite.sizeOnScreen, this.map);
-		const camera = new Camera(new Position(0, 0), canvas.width, canvas.height, this.map);
-		this.gameObjects.push(new Player(playerSprite, playerStartPosition, this.map, camera));
-		this.camera = camera;
+		const playerStartPosition: Position = getStartPositionOfPlayer();
+		this.player = new Player(playerSprite, playerStartPosition, this.map);
+		this.map.player = this.player;
+		this.gameObjects.push(this.player);
 	}
 
 	private gameLoop() {
@@ -49,23 +47,20 @@ export class Game {
 	}
 
 	private updateMap() {
-		this.map.drawBackground(this.context, this.camera);
+		this.map.drawBackground(this.context);
 	}
 
 	private drawDebugInfo() {
 		const debugMargin: number = 10;
 		const fontsize: number = 20;
 		this.context.font = fontsize + "px Arial";
-		this.context.fillStyle = "black";
-		this.context.fillRect(debugMargin, debugMargin, 400, 90);
 		this.context.fillStyle = "white";
 		this.context.fillText(`Player: x: ${this.gameObjects[0].position.x} y: ${this.gameObjects[0].position.y}`, debugMargin, fontsize + debugMargin);
+		this.context.fillText(`Canvas size: w: ${this.context.canvas.width} h: ${this.context.canvas.height}`, debugMargin, fontsize * 2 + debugMargin);
 		this.context.fillText(
-			`Camera: x: ${this.camera.x} y: ${this.camera.y} x1: ${this.camera.x + this.camera.width} y1: ${this.camera.y + this.camera.height}`,
+			`Current tile: x: ${Math.floor(this.gameObjects[0].position.x / Map.TILE_SIZE)} y: ${Math.floor(this.gameObjects[0].position.y / Map.TILE_SIZE)}`,
 			debugMargin,
-			fontsize * 2 + debugMargin
+			fontsize * 3 + debugMargin
 		);
-		this.context.fillText(`Canvas size: w: ${this.context.canvas.width} h: ${this.context.canvas.height}`, debugMargin, fontsize * 3 + debugMargin);
-		this.context.fillText(`Map size: ${this.map.TOTAL_SIZE}`, debugMargin, fontsize * 4 + debugMargin);
 	}
 }

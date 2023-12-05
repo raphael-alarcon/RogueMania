@@ -1,5 +1,5 @@
-import { Map } from "@/game/map/Map";
 import { Player } from "@entities/player/Player";
+import { Map } from "@map/Map";
 import { Position } from "@gamelogic/Position";
 
 export function getRandomInt(min: number, max: number) {
@@ -12,22 +12,26 @@ export function getCenterOfCanvas(canvas: HTMLCanvasElement): Position {
 	return new Position(canvas.width / 2, canvas.height / 2);
 }
 
-export function getStartPositionOfPlayer(spriteSize: number, map: Map): Position {
-	return new Position(map.TOTAL_SIZE / 2 - spriteSize / 2, map.TOTAL_SIZE / 2 - spriteSize / 2);
+export function getStartPositionOfPlayer(): Position {
+	const startTile: Position = new Position(51, 78);
+	console.log("Start tile: ", Map.TILE_SIZE);
+	return new Position(startTile.x * Map.TILE_SIZE, startTile.y * Map.TILE_SIZE);
 }
 
-export function getStartPositionOfCamera(player: Player): Position {
-	const cameraPosition: Position = new Position(player.position.x + player.sprite.sizeOnScreen - player.camera.width / 2, player.position.y + player.sprite.sizeOnScreen - player.camera.height / 2);
-	Object.entries(cameraPosition).forEach(([key, value]) => {
-		if (value < 0) cameraPosition[key as keyof Position] = 0;
-	});
-	return cameraPosition;
-}
+export type Camera = {
+	x: number;
+	y: number;
+	width: number;
+	height: number;
+};
 
-export function getTilesBondaries(camera: any): [Position, Position] {
-	const startTile: Position = new Position(Math.floor(camera.x / Map.TILE_SIZE), Math.floor(camera.y / Map.TILE_SIZE));
-	const endTile: Position = new Position(startTile.x + camera.width / Map.TILE_SIZE + 1, startTile.y + camera.height / Map.TILE_SIZE + 1);
-	return [startTile, endTile];
+export function getCamera(player: Player, canvas: HTMLCanvasElement): Camera {
+	return {
+		x: player.position.x - canvas.width / 2 + player.sprite.SPRITE_SIZE / 2,
+		y: player.position.y - canvas.height / 2,
+		width: canvas.width,
+		height: canvas.height,
+	};
 }
 
 export function getOffset(camera: any, startTile: Position): Position {
