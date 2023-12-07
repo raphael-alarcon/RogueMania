@@ -1,42 +1,31 @@
-import { Position } from "@game/gamelogic/Position";
-import { Sprite } from "@gamelogic/Sprite";
-import { Core } from "../core/Core";
-import { getCenterOfCanvas } from "@/utils/tools";
-import { Map } from "../map/Map";
-import { AnimatableObject } from "../gamelogic/AnimatableObect";
+import { Actor, ActorArgs, CollisionGroupManager, Engine } from "excalibur";
+import { AnimatableObject } from "@gamelogic/AnimatableObect";
+import Container from "typedi";
+import { GraphicService } from "../services/GraphicService";
 
-export abstract class GameObject implements AnimatableObject {
-	public position: Position;
-	public sprite: Sprite;
-	public map: Map;
+export type ActorConfig = { tag: string; collisionGroupKey: string };
 
-	constructor(position: Position, sprite: Sprite, map: Map) {
-		this.position = position;
-		this.sprite = sprite;
-		this.map = map;
-	}
+export abstract class GameObject extends Actor implements AnimatableObject {
+	private graphicService: GraphicService = Container.get(GraphicService);
+
+	abstract type: string;
 
 	get frame(): number[] {
 		return [0, 0];
 	}
 
-	abstract update(): void;
+	constructor({ pos, collisionType, collider }: ActorArgs, { tag, collisionGroupKey }: ActorConfig) {
+		super({
+			pos: pos,
+			collisionType: collisionType,
+			collider: collider,
+			collisionGroup: CollisionGroupManager.groupByName(collisionGroupKey) ? CollisionGroupManager.groupByName(collisionGroupKey) : CollisionGroupManager.create(collisionGroupKey),
+		});
+		this.addTag(tag);
+	}
 
-	draw(context: CanvasRenderingContext2D | null) {
-		if (!context || !this.sprite.isLoaded) return;
-		const [frameX, frameY]: number[] = this.frame;
-		const coordinatesOnScreen: Position = new Position(0, 0);
-		context.drawImage(
-			this.sprite.sprite,
-			frameX,
-			frameY,
-			this.sprite.SPRITE_SIZE,
-			this.sprite.SPRITE_SIZE,
-			coordinatesOnScreen.x,
-			coordinatesOnScreen.y,
-			this.sprite.sizeOnScreen,
-			this.sprite.sizeOnScreen
-		);
-		this.sprite.updateAnimationProgress();
+	public onInitialize(_engine: Engine): void {
+		this.graphicService.registerActorGraphics(this.type, this);
+		this.graphicService.registerActorAnimations(this.type, this);
 	}
 }

@@ -1,18 +1,18 @@
-import { Position } from "@/game/gamelogic/Position";
+import { Vector } from "excalibur";
 
 //#region Direction
 export enum Direction {
-	DOWN = 0,
-	UP = 1,
-	RIGHT = 2,
-	LEFT = 3,
+	DOWN,
+	UP,
+	RIGHT,
+	LEFT,
 }
 
 type DirectionMap = {
-	[key in Direction]: [keyof Position, number];
+	[key in Direction]: [keyof Vector, number];
 };
 
-export const MOVEMENT_SPEED: number = 10;
+export const MOVEMENT_SPEED: number = 1;
 
 export const directionUpdateMap: DirectionMap = {
 	[Direction.DOWN]: ["y", MOVEMENT_SPEED],
@@ -38,8 +38,8 @@ export const keyboardActionMap: KeyboardDirection = {
 //#region Entity
 export enum Status {
 	IDLE = 0,
-	ATTACKING = 2,
-	DEAD = 3,
+	ATTACKING,
+	DEAD,
 	MOVING = 4,
 }
 //#endregion

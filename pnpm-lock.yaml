@@ -5,6 +5,12 @@ settings:
   excludeLinksFromLockfile: false
 
 dependencies:
+  '@excaliburjs/dev-tools':
+    specifier: ^0.28.0
+    version: 0.28.0(excalibur@0.28.2)
+  '@excaliburjs/plugin-tiled':
+    specifier: ^0.28.0
+    version: 0.28.0(excalibur@0.28.2)
   '@types/node':
     specifier: ^20.10.0
     version: 20.10.3
@@ -12,8 +18,14 @@ dependencies:
     specifier: ^2.1.0
     version: 2.1.0
   excalibur:
-    specifier: ^0.28.2
+    specifier: ^0.28.0
     version: 0.28.2
+  reflect-metadata:
+    specifier: ^0.1.13
+    version: 0.1.13
+  typedi:
+    specifier: ^0.10.0
+    version: 0.10.0
 
 devDependencies:
   typescript:
@@ -223,6 +235,27 @@ packages:
     dev: true
     optional: true
 
+  /@excaliburjs/dev-tools@0.28.0(excalibur@0.28.2):
+    resolution: {integrity: sha512-6bg58UeO6OhSRMzRjOEledqYIlkoTieM60eZIix1aWJBJtjoeCWg6qsSPb1nhxBkklg3gD0Df2LgfYpnfnXYWA==}
+    peerDependencies:
+      excalibur: ~0.28.1
+    dependencies:
+      '@tweakpane/core': 1.1.0
+      excalibur: 0.28.2
+      tweakpane: 3.1.0
+    dev: false
+
+  /@excaliburjs/plugin-tiled@0.28.0(excalibur@0.28.2):
+    resolution: {integrity: sha512-WacDIvOP2ikFIEEdlZ7MW8p/d+4ca6JAg+t46EdoqNYfVd2npXIjklLYM25jqf0QMnSvEoxXh6KSIyIHlsbiqw==}
+    peerDependencies:
+      excalibur: ~0.28.1
+    dependencies:
+      excalibur: 0.28.2
+      fast-xml-parser: 3.21.1
+      pako: 1.0.11
+      zstddec: 0.0.2
+    dev: false
+
   /@rollup/rollup-android-arm-eabi@4.6.1:
     resolution: {integrity: sha512-0WQ0ouLejaUCRsL93GD4uft3rOmB8qoQMU05Kb8CmMtMBe7XUDLAltxVZI1q6byNqEtU7N1ZX1Vw5lIpgulLQA==}
     cpu: [arm]
@@ -319,6 +352,10 @@ packages:
     dev: true
     optional: true
 
+  /@tweakpane/core@1.1.0:
+    resolution: {integrity: sha512-vbbiQb+aoFI13lIbE7DJvhHZVE1YlUpGoaAamSpU6wLp2jA3VowS1wfRJBBB8IBCYm7nF6ULl7zfJKxl1XdyfA==}
+    dev: false
+
   /@types/node@20.10.3:
     resolution: {integrity: sha512-XJavIpZqiXID5Yxnxv3RUDKTN5b81ddNC3ecsA0SoFXz/QU8OGBwZGMomiq0zw+uuqbL/krztv/DINAQ/EV4gg==}
     dependencies:
@@ -404,6 +441,13 @@ packages:
     resolution: {integrity: sha512-qQYk2NWI8ify/vYiTqayMPPOfx/2+IADlafhjTI2misREqL00c4gaxEf58G6HaKd807yBqwCyiLzunr6rok+PA==}
     dependencies:
       core-js: 3.33.3
+    dev: false
+
+  /fast-xml-parser@3.21.1:
+    resolution: {integrity: sha512-FTFVjYoBOZTJekiUsawGsSYV9QL0A+zDYCRj7y34IO6Jg+2IMYEtQa+bbictpdpV8dHxXywqU7C0gRDEOFtBFg==}
+    hasBin: true
+    dependencies:
+      strnum: 1.0.5
     dev: false
 
   /for-each@0.3.3:
@@ -537,6 +581,10 @@ packages:
       object-keys: 1.1.1
     dev: false
 
+  /pako@1.0.11:
+    resolution: {integrity: sha512-4hLB8Py4zZce5s4yd9XzopqwVv/yGNhV1Bl8NTmCq1763HeK2+EwVTv+leGeL13Dnh2wfbqowVPXCIO0z4taYw==}
+    dev: false
+
   /picocolors@1.0.0:
     resolution: {integrity: sha512-1fygroTLlHu66zi26VoTDv8yRgm0Fccecssto+MhsZ0D/DGW2sm8E8AjW7NU5VVTRt5GxbeZ5qBuJr+HyLYkjQ==}
     dev: true
@@ -549,6 +597,10 @@ packages:
       picocolors: 1.0.0
       source-map-js: 1.0.2
     dev: true
+
+  /reflect-metadata@0.1.13:
+    resolution: {integrity: sha512-Ts1Y/anZELhSsjMcU605fU9RE4Oi3p5ORujwbIKXfWa+0Zxs510Qrmrce5/Jowq3cHSZSJqBjypxmHarc+vEWg==}
+    dev: false
 
   /rollup@4.6.1:
     resolution: {integrity: sha512-jZHaZotEHQaHLgKr8JnQiDT1rmatjgKlMekyksz+yk9jt/8z9quNjnKNRoaM0wd9DC2QKXjmWWuDYtM3jfF8pQ==}
@@ -584,6 +636,18 @@ packages:
     resolution: {integrity: sha512-R0XvVJ9WusLiqTCEiGCmICCMplcCkIwwR11mOSD9CR5u+IXYdiseeEuXCVAjS54zqwkLcPNnmU4OeJ6tUrWhDw==}
     engines: {node: '>=0.10.0'}
     dev: true
+
+  /strnum@1.0.5:
+    resolution: {integrity: sha512-J8bbNyKKXl5qYcR36TIO8W3mVGVHrmmxsd5PAItGkmyzwJvybiw2IVq5nqd0i4LSNSkB/sx9VHllbfFdr9k1JA==}
+    dev: false
+
+  /tweakpane@3.1.0:
+    resolution: {integrity: sha512-PGAp/LPQdHwzL7/iAW4lV1p9iPQTti7YMjMWO48CoYjvZRS59RmgQnhEGzKzqST1JnmOYmQUjTe8bdhlZRJs5A==}
+    dev: false
+
+  /typedi@0.10.0:
+    resolution: {integrity: sha512-v3UJF8xm68BBj6AF4oQML3ikrfK2c9EmZUyLOfShpJuItAqVBHWP/KtpGinkSsIiP6EZyyb6Z3NXyW9dgS9X1w==}
+    dev: false
 
   /typescript@5.3.2:
     resolution: {integrity: sha512-6l+RyNy7oAHDfxC4FzSJcz9vnjTKxrLpDG5M2Vu4SHRVNg6xzqZp6LYSR9zjqQTu8DU/f5xwxUdADOkbrIX2gQ==}
@@ -649,4 +713,8 @@ packages:
       for-each: 0.3.3
       gopd: 1.0.1
       has-tostringtag: 1.0.0
+    dev: false
+
+  /zstddec@0.0.2:
+    resolution: {integrity: sha512-DCo0oxvcvOTGP/f5FA6tz2Z6wF+FIcEApSTu0zV5sQgn9hoT5lZ9YRAKUraxt9oP7l4e8TnNdi8IZTCX6WCkwA==}
     dev: false

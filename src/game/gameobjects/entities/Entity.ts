@@ -1,32 +1,23 @@
-import { Position } from "@gamelogic/Position";
-import { Sprite } from "@gamelogic/Sprite";
-import { Status, Direction, directionUpdateMap } from "@/utils/Constants";
-import { Map } from "@/game/map/Map";
+import { Status, Direction } from "@/utils/Constants";
 import { MoveableObject } from "../MoveableObject";
 import { AnimatableObject } from "@/game/gamelogic/AnimatableObect";
+import { ActorArgs, Engine } from "excalibur";
+import { ActorConfig } from "@gameobjects/GameObject";
 
 export abstract class Entity extends MoveableObject implements AnimatableObject {
 	public direction: Direction = Direction.DOWN;
 	public status: Status = Status.IDLE;
 	public isMoving: boolean = false;
 
-	constructor(sprite: Sprite, position: Position, map: Map) {
-		super(position, sprite, map);
-		console.log("Entity created");
+	constructor({ pos, collisionType, collider }: ActorArgs, { tag, collisionGroupKey }: ActorConfig) {
+		super({ pos, collisionType, collider }, { tag, collisionGroupKey });
 	}
 
-	public create() {
-		throw new Error("Method not implemented.");
+	public onInitialize(_engine: Engine): void {
+		super.onInitialize(_engine);
 	}
 
-	override update() {
-		if (this.status == Status.MOVING) {
-			const [property, posUpdate]: [string, number] = directionUpdateMap[this.direction];
-			this.position[property as keyof Position] += posUpdate;
-		}
-	}
-
-	public die() {
-		throw new Error("Method not implemented.");
+	public useRelevantAnimation(): void {
+		this.graphics.use(Status[this.status] + " " + Direction[this.direction]);
 	}
 }

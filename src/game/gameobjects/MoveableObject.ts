@@ -1,33 +1,31 @@
 import { Direction, Status, directionUpdateMap } from "@/utils/Constants";
-import { Position } from "../gamelogic/Position";
-import { Sprite } from "../gamelogic/Sprite";
-import { Map } from "../map/Map";
-import { GameObject } from "./GameObject";
+import { ActorConfig, GameObject } from "./GameObject";
+import { ActorArgs, Vector } from "excalibur";
 
 export abstract class MoveableObject extends GameObject {
 	public status: Status;
 	public direction: Direction;
 
-	constructor(position: Position, sprite: Sprite, map: Map) {
-		super(position, sprite, map);
+	constructor({ pos, collisionType, collider }: ActorArgs, { tag, collisionGroupKey }: ActorConfig) {
+		super({ pos, collisionType, collider }, { tag, collisionGroupKey });
 		this.direction = Direction.DOWN;
 		this.status = Status.IDLE;
 	}
 
-	abstract canMove(property: keyof Position, posUpdate: number): boolean;
+	abstract canMove(property: keyof Vector, posUpdate: number): boolean;
 
-	theoricalPosition(property: keyof Position, posUpdate: number): Position {
-		const theoricalPosition: Position = new Position(this.position.x, this.position.y);
-		theoricalPosition[property as keyof Position] += posUpdate;
+	theoricalPosition(property: keyof Vector, posUpdate: number): Vector {
+		const theoricalPosition: Vector = new Vector(this.pos.x, this.pos.y);
+		theoricalPosition[property as "x" | "y"] += posUpdate;
 		return theoricalPosition;
 	}
 
 	move(direction: Direction) {
 		const [property, posUpdate] = directionUpdateMap[direction];
-		this.position[property as keyof Position] += posUpdate;
+		this.pos[property as "x" | "y"] += posUpdate;
 	}
 
-	isInBoundaries(theoricalPosition: Position, minPosition: Position, maxPosition: Position): boolean {
+	isInBoundaries(theoricalPosition: Vector, minPosition: Vector, maxPosition: Vector): boolean {
 		return theoricalPosition.x >= minPosition.x && theoricalPosition.x <= maxPosition.x && theoricalPosition.y >= minPosition.y && theoricalPosition.y <= maxPosition.y;
 	}
 }
